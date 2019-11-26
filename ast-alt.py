@@ -94,7 +94,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '-o', '--observatory',
-    help="Gözlem yerini belirtiniz tug ya da soao",
+    help="Hangi gözlem yeri için alt hesabı yapılacak tug ya da soao",
     type=str,
 )
 
