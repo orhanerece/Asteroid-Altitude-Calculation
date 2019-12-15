@@ -97,6 +97,11 @@ parser.add_argument(
     help="Hangi gözlem yeri için alt hesabı yapılacak tug ya da soao",
     type=str,
 )
+parser.add_argument(
+    '-l', '--limitless',
+    help="Parlaklık ya da alt limiti yok",
+    action='store_true',
+)
 
 arguments = parser.parse_args()
 
@@ -114,6 +119,13 @@ elif obs == "tug":
 else:
     print("-o ile tug ya da soao için arama yapınız!")
     exit()
+
+    
+if arguments.limitless:
+    alt_limit = -99
+    mag_limit = 99
+else:
+    alt_limit = 20
 
 
 zaman=arguments.zaman
