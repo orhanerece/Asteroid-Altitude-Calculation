@@ -180,8 +180,9 @@ for name in names:
             altitude = 180*math.asin(math.sin(math.radians(DEC))* \
                        math.sin(math.radians(LAT))+math.cos(math.radians(DEC))*math.cos(math.radians(LAT))*math.cos(math.radians(HA)))/math.pi
 
-            if altitude > 20:
-                print(name,"%.1f" % round(altitude,2)+"°",MAG,RA,DEC)
+            if altitude > alt_limit:
+                print(name,"%.1f" % round(altitude,2)+"°",MAG,str(RA_hh)+":"+str(RA_mm)+":"+str(RA_ss)+" "+
+                      str(Dec_dd)+":"+str(Dec_mm)+":"+str(Dec_ss))
             else:
                 print(name, " Gözlenebilir Değil")
         else:
