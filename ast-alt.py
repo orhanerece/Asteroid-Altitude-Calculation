@@ -94,7 +94,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '-o', '--observatory',
-    help="Hangi gözlem yeri için alt hesabı yapılacak tug ya da soao",
+    help="Gözlem yerini belirtiniz tug ya da soao",
     type=str,
 )
 parser.add_argument(
@@ -120,13 +120,12 @@ else:
     print("-o ile tug ya da soao için arama yapınız!")
     exit()
 
-    
+
 if arguments.limitless:
     alt_limit = -99
     mag_limit = 99
 else:
     alt_limit = 20
-
 
 zaman=arguments.zaman
 
@@ -169,6 +168,20 @@ for name in names:
         RA = float(satir.split("|")[2])*15
         DEC = float(satir.split("|")[3])
         MAG = float(satir.split("|")[5])
+        RA_hh=int((RA/15 // 1))
+        RA_mm=int(((RA/15-RA_hh) *60 //1))
+        RA_ss=int((((RA/15-RA_hh)*60)-RA_mm) * 60 // 1)
+        Dec_dd=int(DEC // 1)
+        Dec_mm=int((DEC-Dec_dd) *60 // 1)
+        Dec_ss=int(((DEC-Dec_dd) *60 - Dec_mm) * 60 // 1)
+        if RA_mm < 10:
+            RA_mm = "0"+str(RA_mm)
+        if Dec_mm < 10:
+            Dec_mm = "0"+str(Dec_mm)
+        if RA_ss < 10:
+            RA_ss = "0"+str(RA_ss)
+        if Dec_ss < 10:
+            Dec_ss = "0"+str(Dec_ss)
 
 
         if MAG <= mag_limit:
