@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 import sys
 from time import strftime
@@ -76,7 +77,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument(
     '-z', '--zaman',
-    help="Hangi zaman için alt hesabı yapılacak",
+    help="Hangi zaman için alt hesabı yapılacak, yilaygün saatdakikasaniye örnek: 20200215 222020",
     type=str,
     nargs=2,
     default=now
@@ -171,9 +172,10 @@ for name in names:
         RA_hh=int((RA/15 // 1))
         RA_mm=int(((RA/15-RA_hh) *60 //1))
         RA_ss=int((((RA/15-RA_hh)*60)-RA_mm) * 60 // 1)
-        Dec_dd=int(DEC // 1)
-        Dec_mm=int((DEC-Dec_dd) *60 // 1)
-        Dec_ss=int(((DEC-Dec_dd) *60 - Dec_mm) * 60 // 1)
+        Dec_dd=int(math.modf(DEC)[1])
+        Dec_mm=int(math.pow((math.modf(DEC)[0]),2)**(1/2) *60 // 1)
+        Dec_ss=int(math.modf(math.pow((math.modf(DEC)[0]),2)**(1/2) *60)[0] * 60 // 1)
+
         if RA_mm < 10:
             RA_mm = "0"+str(RA_mm)
         if Dec_mm < 10:
@@ -187,7 +189,7 @@ for name in names:
         if MAG <= mag_limit:
 
             LST = localsiderealtime(JD_hesaplama(zaman)[5],ut)
-            
+
             HA = LST - RA
 
             altitude = 180*math.asin(math.sin(math.radians(DEC))* \
