@@ -162,12 +162,13 @@ for name in names:
     ep=str(JD_hesaplama(zaman)[5]+2451545.00000-3/24)
 
     try:
-        vo="http://vo.imcce.fr/webservices/skybot/skybotresolver_query.php?-ep="+ep+"&-name="+name+"&-mime=text&-output=object&-loc=A84&-refsys=EQJ2000&-from=SkybotDoc"
-
-
+        vo="http://vo.imcce.fr/webservices/skybot/skybotresolver_query.php?-ep="+ep+"&-name="+name+"&-mime=text&-output=basic&-loc=A84&-refsys=EQJ2000&-from=SkybotDoc"
+        
         satir=asteroid_names(vo)[3]
         RA = float(satir.split("|")[2])*15
         DEC = float(satir.split("|")[3])
+        dRA = float(satir.split("|")[7])
+        dDEC = float(satir.split("|")[8])
         MAG = float(satir.split("|")[5])
         RA_hh=int((RA/15 // 1))
         RA_mm=int(((RA/15-RA_hh) *60 //1))
@@ -196,12 +197,35 @@ for name in names:
                        math.sin(math.radians(LAT))+math.cos(math.radians(DEC))*math.cos(math.radians(LAT))*math.cos(math.radians(HA)))/math.pi
 
             if altitude > alt_limit:
-                print(name,"%.1f" % round(altitude,2)+"°",MAG,str(RA_hh)+":"+str(RA_mm)+":"+str(RA_ss)+" "+
-                      str(Dec_dd)+":"+str(Dec_mm)+":"+str(Dec_ss))
+                print("\n"+name,"%.1f" % round(altitude,2)+"°",MAG,str(RA_hh)+":"+str(RA_mm)+":"+str(RA_ss)+" "+
+                      str(Dec_dd)+":"+str(Dec_mm)+":"+str(Dec_ss)+"\n")
             else:
                 print(name, " Gözlenebilir Değil")
         else:
             print(name," Gözlenebilir Değil")
     except IndexError:
         print(name," Asteroid adı bulunamadı!")
+
+if arguments.cisim and altitude > alt_limit and MAG <= mag_limit:
+    from urllib.request import urlretrieve
+    r= str(RA_hh)+"+"+str(RA_mm)+"+"+str(RA_ss)
+    d= str(Dec_dd)+"+"+str(Dec_mm)+"+"+str(Dec_ss)
+    url = "https://archive.stsci.edu/cgi-bin/dss_search?v=poss2ukstu_red&r="+r+"&d="+d+"&e=J2000&h=21.0&w=21.0&f=gif&c=none&fov=NONE&v3="
+    urlretrieve(url, "test.gif")
+    from PIL import Image, ImageDraw
+    image = Image.open('test.gif').convert("RGBA")
+    draw = ImageDraw.Draw(image)
+    center_x,center_y = image.size[0],image.size[1]
+    dRA_len = dRA*60*21/1250
+    dDEC_len = dDEC*60*21/1250
+
+    aci = math.atan(dDEC_len/dRA_len)/math.pi*180
+    if aci < 0 and aci > -90 and dRA_len < 0:
+        aci = aci + 180
+    elif dRA_len < 0 and dDEC_len < 0:
+        aci = aci + 180
+
+    draw.line((center_x/2,center_y/2, center_x/2+dRA_len, center_y/2+dDEC_len), fill="red", width=2)
+    draw.arc((center_x/2-40,center_y/2-40,center_x/2+40,center_y/2+40), start=aci + 20, end=aci -20, fill=(255, 255, 0))
+    image.show()
 
